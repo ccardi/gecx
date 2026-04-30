@@ -1,0 +1,12 @@
+{
+  "catalog_id": "default_catalog",
+  "location_id": "global",
+  "pageSize": 10,
+  "placement_id": "default_search",
+  "project_id": "Your project",
+  "queryExpansionSpec": {
+    "condition": "AUTO",
+    "pinUnexpandedResults": true
+  },
+  "visitorId": "test_visitor"
+}
