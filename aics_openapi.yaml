@@ -1,0 +1,199 @@
+openapi: 3.0.3
+info:
+  title: Vertex AI Search for Commerce (Retail API)
+  version: v2
+  description: API for performing product searches and browse requests.
+servers:
+  - url: $env_var
+
+paths:
+  /projects/{project_id}/locations/{location_id}/catalogs/{catalog_id}/placements/{placement_id}:search:
+    post:
+      summary: Performs a search.
+      operationId: Search
+      parameters:
+        - name: project_id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: location_id
+          in: path
+          required: true
+          schema:
+            type: string
+            default: global
+        - name: catalog_id
+          in: path
+          required: true
+          schema:
+            type: string
+            default: default_catalog
+        - name: placement_id
+          in: path
+          required: true
+          schema:
+            type: string
+            default: default_search
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SearchRequest'
+      responses:
+        '200':
+          description: Successful search response
+          content:
+            application/json:
+              schema:
+                type: object # Simplified for brevity
+
+  /projects/{project_id}/locations/{location_id}/catalogs/{catalog_id}/branches/{branch_id}/products/{product_id}:
+    get:
+      summary: Gets a product.
+      operationId: getProduct
+      description: "Retrieves a specific product's details using its full resource name."
+      parameters:
+        - name: project_id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: location_id
+          in: path
+          required: true
+          schema:
+            type: string
+            default: global
+        - name: catalog_id
+          in: path
+          required: true
+          schema:
+            type: string
+            default: default_catalog
+        - name: branch_id
+          in: path
+          required: true
+          description: "The branch ID (0, 1, or 2). Use 'default_branch' to pull from the current active branch."
+          schema:
+            type: string
+            default: default_branch
+        - name: product_id
+          in: path
+          required: true
+          description: "The ID of the product to retrieve."
+          schema:
+            type: string
+      responses:
+        '200':
+          description: A Product object.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Product'
+        '404':
+          description: Product not found.
+
+components:
+  schemas:
+    SearchRequest:
+      type: object
+      required:
+        - visitorId
+      properties:
+        query:
+          type: string
+          description: "The raw text query from the user."
+        visitorId:
+          type: string
+          description: "A unique identifier to track the user session (required)."
+        pageSize:
+          type: integer
+          format: int32
+          default: 10
+        pageToken:
+          type: string
+          description: "Token for the next page of results."
+        filter:
+          type: string
+          description: "The filter applied to the search (e.g., 'attributes.color: ANY(\"red\")' or 'price' > 100 or price <100)."
+        orderBy:
+          type: string
+          description: "Order of results (e.g., 'price desc')."
+        facetSpecs:
+          type: array
+          items:
+            $ref: '#/components/schemas/FacetSpec'
+        userInfo:
+          type: object
+          properties:
+            userId:
+              type: string
+            ipAddress:
+              type: string
+            userAgent:
+              type: string
+        queryExpansionSpec:
+          type: object
+          description: "Specification to determine under which conditions query expansion should occur."
+          properties:
+            condition:
+              type: string
+              description: "The condition under which query expansion should occur (e.g., 'AUTO', 'DISABLED')."
+            pinUnexpandedResults:
+              type: boolean
+              description: "Whether to pin unexpanded results. If true, exact matches are served first."
+
+    FacetSpec:
+      type: object
+      properties:
+        facetKey:
+          type: object
+          properties:
+            key:
+              type: string
+        limit:
+          type: integer
+    
+    Product:
+      type: object
+      properties:
+        name:
+          type: string
+          description: "Full resource name of the product."
+        id:
+          type: string
+          description: "The merchant-provided product ID."
+        title:
+          type: string
+          description: "The title of the product."
+        categories:
+          type: array
+          items:
+            type: string
+        brands:
+          type: array
+          items:
+            type: string
+        description:
+          type: string
+        uri:
+          type: string
+          description: "The URL to the product page."
+        attributes:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/CustomAttribute'
+
+    CustomAttribute:
+      type: object
+      properties:
+        text:
+          type: array
+          items:
+            type: string
+        numbers:
+          type: array
+          items:
+            type: number
