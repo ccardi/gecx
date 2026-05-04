@@ -1,6 +1,6 @@
 # GECX Agent with AI Commerce Search
 
-This directory contains the configuration, OpenAPI specifications, and custom scripts required to create and configure a conversational agent in **GECX** (Gen AI Enterprise Search & Converse) that connects to **AI Commerce Search** (formerly known as **VAISC** - Vertex AI Search for Commerce).
+This directory contains the configuration, OpenAPI specifications, and custom scripts required to create and configure a conversational agent in **GECX** (Gemini Enterprise for Customer Experience) that connects to **AI Commerce Search** (formerly known as **VAISC** - Vertex AI Search for Commerce).
 
 ## Overview
 
