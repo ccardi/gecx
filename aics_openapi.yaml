@@ -2,7 +2,7 @@ openapi: 3.0.3
 info:
   title: Vertex AI Search for Commerce (Retail API)
   version: v2
-  description: API for performing product searches and browse requests.
+  description: API for performing product searches, browse requests, and retrieving catalog attribute configurations.
 servers:
   - url: $env_var
 
@@ -94,6 +94,37 @@ paths:
                 $ref: '#/components/schemas/Product'
         '404':
           description: Product not found.
+
+  /projects/{project_id}/locations/{location_id}/catalogs/{catalog_id}/attributesConfig:
+    get:
+      summary: Gets the Attributes Config.
+      operationId: getAttributesConfig
+      description: "Gets an AttributesConfig of a Catalog to see which custom attributes are configured, searchable, and facetable."
+      parameters:
+        - name: project_id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: location_id
+          in: path
+          required: true
+          schema:
+            type: string
+            default: global
+        - name: catalog_id
+          in: path
+          required: true
+          schema:
+            type: string
+            default: default_catalog
+      responses:
+        '200':
+          description: The AttributesConfig for the specified catalog.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AttributesConfig'
 
 components:
   schemas:
@@ -197,3 +228,42 @@ components:
           type: array
           items:
             type: number
+
+    AttributesConfig:
+      type: object
+      description: "Catalog level attribute configuration."
+      properties:
+        name:
+          type: string
+          description: "Required. Immutable. The fully qualified resource name of the attribute config."
+        catalogAttributes:
+          type: object
+          description: "A map of custom attribute configurations. The key is the attribute name."
+          additionalProperties:
+            $ref: '#/components/schemas/CatalogAttribute'
+        attributeConfigLevel:
+          type: string
+          description: "Output only. The attribute config level of the catalog (e.g., 'CATALOG_LEVEL_ATTRIBUTE_CONFIG')."
+
+    CatalogAttribute:
+      type: object
+      description: "Configuration for a single catalog attribute."
+      properties:
+        key:
+          type: string
+          description: "Required. Attribute name. Must be UTF-8 encoded."
+        inUse:
+          type: boolean
+          description: "Output only. Indicates whether this attribute has been used by any products."
+        type:
+          type: string
+          description: "Output only. The type of this attribute. (UNKNOWN, TEXTUAL, NUMERICAL)"
+        indexableOption:
+          type: string
+          description: "Determines if attribute values are indexable (INDEXABLE_ENABLED or INDEXABLE_DISABLED)."
+        dynamicFacetableOption:
+          type: string
+          description: "Determines if attribute values are available for dynamic facets (DYNAMIC_FACETABLE_ENABLED or DYNAMIC_FACETABLE_DISABLED)."
+        searchableOption:
+          type: string
+          description: "Determines if attribute values are searchable by text queries (SEARCHABLE_ENABLED or SEARCHABLE_DISABLED)."

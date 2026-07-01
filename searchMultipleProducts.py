@@ -1,6 +1,6 @@
 def searchMultipleProducts(queries: list[str]) -> dict:
     config = context.state.get("config_vaisc")
-    
+    print(config)
     # This will hold the final array of objects for our schema
     query_results = []
     
@@ -36,4 +36,4 @@ def searchMultipleProducts(queries: list[str]) -> dict:
         })
 
     # Return the dictionary exactly matching the updated schema root
-    return {"queries": queries, "queryResults": query_results, "type": "products-carrousels"}
+    return {"queries": queries, "queryResults": query_results, "type": "products-carousels"}
